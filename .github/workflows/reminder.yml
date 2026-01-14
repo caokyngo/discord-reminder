@@ -15,19 +15,25 @@ jobs:
       - name: Send Discord message
         env:
           WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
-        run: |
-          DATE=$(date '+%Y-%m-%d %H:%M')
-          DAY=$(date '+%u')
+       run: |
+  DAY=$(date '+%u')
+  TIME=$(date '+%H:%M')
 
-          if [ "$DAY" = "5" ] && [ "$(date '+%H:%M')" = "02:00" ]; then
-            MESSAGE="🚨🚨 **BIG REMIND** 🚨🚨
+  if [ "$DAY" = "5" ] && [ "$TIME" = "02:00" ]; then
+    MESSAGE=$(cat <<EOF
+🚨🚨 **BIG REMIND** 🚨🚨
 Hôm nay là **Thứ 6**!
-Mọi người nhớ **FULL FILL LOGWORK cho cả tuần** 💪"
-          else
-            MESSAGE="⏰ **5:45 PM Reminder**
-Mọi người nhớ điền **file report** nhé!"
-          fi
+Mọi người nhớ **FULL FILL LOGWORK cho cả tuần** 💪
+EOF
+)
+  else
+    MESSAGE=$(cat <<EOF
+⏰ **5:45 PM Reminder**
+Mọi người nhớ điền **file report** nhé!
+EOF
+)
+  fi
 
-          curl -X POST -H "Content-Type: application/json" \
-            -d "{\"content\":\"$MESSAGE\"}" \
-            $WEBHOOK_URL
+  curl -X POST -H "Content-Type: application/json" \
+    -d "{\"content\":\"$MESSAGE\"}" \
+    $WEBHOOK_URL
