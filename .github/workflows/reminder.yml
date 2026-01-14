@@ -16,12 +16,12 @@ jobs:
 
     env:
       DAILY_MESSAGE: |
-      @everyone
+       @everyone
         ⏰ **Reminder lúc {{TIME}}**
         Mọi người nhớ điền **file report** nhé!
 
       WEEKLY_MESSAGE: |
-      @everyone
+       @everyone
         🚨🚨 **BIG REMIND** 🚨🚨
         (Gửi lúc {{TIME}})
         Hôm nay là **Thứ 6**!
