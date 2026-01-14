@@ -14,6 +14,16 @@ jobs:
   reminder:
     runs-on: ubuntu-latest
 
+    env:
+      DAILY_MESSAGE: |
+        ⏰ **5:45 PM Reminder**
+        Mọi người nhớ điền **file report** nhé!
+
+      WEEKLY_MESSAGE: |
+        🚨🚨 **BIG REMIND** 🚨🚨
+        Hôm nay là **Thứ 6**!
+        Mọi người nhớ **FULL FILL LOGWORK cho cả tuần** 💪
+
     steps:
       - name: Send reminder to Discord
         env:
@@ -21,12 +31,9 @@ jobs:
           CRON_EXPR: ${{ github.event.schedule }}
         run: |
           if [ "$CRON_EXPR" = "0 2 * * 5" ]; then
-            MESSAGE="🚨🚨 **BIG REMIND** 🚨🚨
-Hôm nay là **Thứ 6**!
-Mọi người nhớ **FULL FILL LOGWORK cho cả tuần** 💪"
+            MESSAGE="$WEEKLY_MESSAGE"
           else
-            MESSAGE="⏰ **5:45 PM Reminder**
-Mọi người nhớ điền **file report** nhé!"
+            MESSAGE="$DAILY_MESSAGE"
           fi
 
           jq -n --arg content "$MESSAGE" \
