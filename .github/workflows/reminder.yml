@@ -3,7 +3,7 @@ name: Discord Reminder
 on:
   schedule:
     # Daily reminder (UTC+7 = 10:45 UTC)
-    - cron: "45 19 * * *"
+    - cron: "50 19 * * *"
 
     # Friday weekly reminder (UTC+7 = 02:00 UTC)
     - cron: "0 2 * * 5"
