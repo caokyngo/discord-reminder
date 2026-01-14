@@ -2,10 +2,10 @@ name: Discord Reminder
 
 on:
   schedule:
-    # 5:45 PM hằng ngày (UTC+7 = 10:45 UTC)
+    # Daily reminder (UTC+7 = 10:45 UTC)
     - cron: "45 10 * * *"
 
-    # 9:00 AM Thứ 6 (UTC+7 = 02:00 UTC)
+    # Friday weekly reminder (UTC+7 = 02:00 UTC)
     - cron: "0 2 * * 5"
 
   workflow_dispatch:
@@ -16,11 +16,12 @@ jobs:
 
     env:
       DAILY_MESSAGE: |
-        ⏰ **5:45 PM Reminder**
+        ⏰ **Reminder lúc {{TIME}}**
         Mọi người nhớ điền **file report** nhé!
 
       WEEKLY_MESSAGE: |
         🚨🚨 **BIG REMIND** 🚨🚨
+        (Gửi lúc {{TIME}})
         Hôm nay là **Thứ 6**!
         Mọi người nhớ **FULL FILL LOGWORK cho cả tuần** 💪
 
@@ -30,11 +31,23 @@ jobs:
           WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
           CRON_EXPR: ${{ github.event.schedule }}
         run: |
+          # Chỉ gửi khi chạy theo schedule (không gửi khi Run workflow)
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "Manual run detected, skip sending."
+            exit 0
+          fi
+
+          # Lấy giờ VN (UTC+7)
+          TIME_VN=$(TZ=Asia/Ho_Chi_Minh date '+%H:%M')
+
           if [ "$CRON_EXPR" = "0 2 * * 5" ]; then
             MESSAGE="$WEEKLY_MESSAGE"
           else
             MESSAGE="$DAILY_MESSAGE"
           fi
+
+          # Thay {{TIME}} bằng giờ thực tế
+          MESSAGE="${MESSAGE//\{\{TIME\}\}/$TIME_VN}"
 
           jq -n --arg content "$MESSAGE" \
             '{content: $content}' \
