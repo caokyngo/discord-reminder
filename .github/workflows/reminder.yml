@@ -5,35 +5,39 @@ on:
     # 5:45 PM hằng ngày (UTC+7 → 10:45 UTC)
     - cron: "45 10 * * *"
 
-    # 9:00 AM thứ 6 (UTC+7 → 02:00 UTC)
+    # 9:00 AM Thứ 6 (UTC+7 → 02:00 UTC)
     - cron: "0 2 * * 5"
+
+  workflow_dispatch:
 
 jobs:
   send-reminder:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Send Discord message
+      - name: Send reminder to Discord
         env:
           WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
-       run: |
-  DAY=$(date '+%u')
-  TIME=$(date '+%H:%M')
+        run: |
+          DAY=$(date '+%u')
+          TIME=$(date '+%H:%M')
 
-  if [ "$DAY" = "5" ] && [ "$TIME" = "02:00" ]; then
-    MESSAGE=$(cat <<EOF
+          if [ "$DAY" = "5" ] && [ "$TIME" = "02:00" ]; then
+            MESSAGE=$(cat <<EOF
 🚨🚨 **BIG REMIND** 🚨🚨
 Hôm nay là **Thứ 6**!
 Mọi người nhớ **FULL FILL LOGWORK cho cả tuần** 💪
 EOF
 )
-  else
-    MESSAGE=$(cat <<EOF
+          else
+            MESSAGE=$(cat <<EOF
 ⏰ **5:45 PM Reminder**
 Mọi người nhớ điền **file report** nhé!
 EOF
 )
-  fi
+          fi
 
-  curl -X POST -H "Content-Type: application/json" \
-    -d "{\"content\":\"$MESSAGE\"}" \
-    $WEBHOOK_URL
+          curl -s -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"$MESSAGE\"}" \
+            "$WEBHOOK_URL"
